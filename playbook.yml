@@ -1,0 +1,16 @@
+---
+- hosts: inetRouter, centralRouter
+  name: Setup routers
+  become: yes
+  roles:
+    - role: routers
+
+
+- hosts: testServer1, testServer2, testClient1, testClient2
+  name: Setup servers
+  become: yes
+  roles:
+    - role: servers
+
+
+

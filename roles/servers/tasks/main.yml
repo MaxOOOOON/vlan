@@ -1,0 +1,26 @@
+---
+- name: Include vars for server1
+  include_vars: server1.yml
+  when: ansible_hostname == 'testServer1'
+
+- name: Include vars for server2
+  include_vars: server2.yml
+  when: ansible_hostname == 'testServer2'
+
+- name: Include vars for client1
+  include_vars: client1.yml
+  when: ansible_hostname == 'testClient1'
+
+- name: Include vars for client2
+  include_vars: client2.yml
+  when: ansible_hostname == 'testClient2'
+
+
+- name: Add VLAN to i-face eth1
+  nmcli:
+    type: vlan
+    conn_name: '{{ conn_name }}'
+    vlandev: eth1
+    vlanid: '{{ vlan }}'
+    ip4: '{{ ip }}'
+    state: present

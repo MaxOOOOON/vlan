@@ -1,0 +1,86 @@
+---
+- name: Include vars for inetRouter
+  include_vars: inetRouter.yml
+  when: ansible_hostname == 'inetRouter'
+
+- name: Include vars for centralRouter
+  include_vars: centralRouter.yml
+  when: ansible_hostname == 'centralRouter'
+
+- name: Set sysctl params
+  sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+    sysctl_file: /etc/sysctl.conf
+    ignoreerrors: yes
+    reload: yes
+  with_dict: "{{ sysctl_params }}"
+ 
+
+- name: Disable default route for eth0
+  lineinfile:
+    path: /etc/sysconfig/network-scripts/ifcfg-eth0
+    line: DEFROUTE=no
+  notify: Restart network
+  when: ansible_hostname == 'centralRouter'
+
+
+- name: change eth conf
+  blockinfile: 
+    dest: /etc/sysconfig/network-scripts/ifcfg-{{ item }}
+    block: |
+     MASTER=bond0
+     SLAVE=yes
+  loop: 
+    - eth1
+    - eth2
+    
+
+- name: add bond0 iface
+  nmcli:
+    type: bond
+    conn_name: 'bond0'
+    ip4: '{{ ip }}'
+    mode: 'active-backup'
+    gw4: '{{ gateway.ip }}'
+    miimon: 100
+    state: present
+    
+
+- name: add param
+  shell: 'nmcli con mod bond0 +bond.options "fail_over_mac=1"'
+
+
+- name: add bond-slave eth1
+  nmcli:
+    type: bond-slave
+    conn_name: 'eth1'
+    ifname: 'eth1'
+    master: 'bond0'
+    state: present
+
+
+- name: add bond-slave eth2
+  nmcli:
+    type: bond-slave
+    conn_name: 'eth2'
+    ifname: 'eth2'
+    master: 'bond0'
+    state: present
+
+
+- name: Reboot server
+  reboot: 
+    msg: "Reboot initiated by Ansible"
+
+
+- name: Set iptables rules
+  iptables:
+    table: nat
+    chain: POSTROUTING
+    destination: "!192.168.0.0/16"
+    out_interface: eth0
+    jump: MASQUERADE
+  become: yes
+  when: ansible_hostname == 'inetRouter'

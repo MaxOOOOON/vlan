@@ -1,0 +1,8 @@
+ip: 192.168.255.1/24
+
+sysctl_params:
+    net.ipv4.ip_forward: "1"
+
+
+gateway:
+  ip: ''
