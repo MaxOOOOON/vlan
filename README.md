@@ -1,7 +1,7 @@
 # vlan
 
 
-ДЗ
+# ДЗ
     
     Бонды и вланы
 
@@ -23,17 +23,21 @@
 
 ---
 
-Выполнение
+# Выполнение  
+## Стенд   
+![](https://github.com/MaxOOOOON/vlan/blob/main/pictures/network23-1801-024140.png)    
 
-Запуск стенда 
+### Запуск стенда 
 
     vagrant up 
 
-Проверка бонда      
-![]()    
-![]()    
+### Проверка бонда через отключения одного из интерфейсов
+![](https://github.com/MaxOOOOON/vlan/blob/main/pictures/Screenshot_20211114_205703.png)   
+    
+![](https://github.com/MaxOOOOON/vlan/blob/main/pictures/Screenshot_20211114_205926.png)    
 
 
 
-Проверка vlan между клиентом и сервером     
-![]()    
+### Проверка vlan между клиентом и сервером     
+    
+![](https://github.com/MaxOOOOON/vlan/blob/main/pictures/Screenshot_20211114_210048.png)    
